@@ -39,14 +39,12 @@ class Psu {
         unsigned int currentSetPoint;
         float csp;
         float cerrIntegral;
-        float C_P;
-        float C_I;
-
+        PID ipid;
+        PID vpid;
+        
         unsigned int voltageSetPoint;
         float vsp;
         float errIntegral;
-        float P;
-        float I;
         int controlSignal;
         
         uint16_t current;

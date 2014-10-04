@@ -1,16 +1,18 @@
 #include "Psu.h"
 #include "Arduino.h"
 
-Psu::Psu(uint8_t _dacOutPin, uint8_t _isensePin, uint8_t _vsensePin, PID ipid, PID vpid):
+Psu::Psu(uint8_t _dacOutPin, uint8_t _isensePin, uint8_t _vsensePin, PID _ipid, PID _vpid):
         dacOutPin(_dacOutPin),
         isensePin(_isensePin),
-        vsensePin(_vsensePin)
+        vsensePin(_vsensePin),
+        ipid(_ipid),
+        vpid(_vpid)
 {
-    C_P = 2.1;
-    C_I = 0.05;
-    
-    P = 7.1;
-    I = 1.5;
+    //~ C_P = 2.1;
+    //~ C_I = 0.05;
+    //~ 
+    //~ P = 7.1;
+    //~ I = 1.5;
 }
 
 void Psu::setConstantVoltage(uint16_t voltage){
@@ -61,10 +63,10 @@ void Psu::controll(int value) {
 void Psu::servoVoltage(unsigned int curVoltage) {
   float v = (float)curVoltage / (float) MAX_VOLTAGE;
   float error = vsp - v;
-  float ctrl = error * P + errIntegral;
+  float ctrl = error * vpid.P + errIntegral;
   int controlSignal = ctrl * 255;
   if(controlSignal < 255) {
-    errIntegral += error * I;
+    errIntegral += error * vpid.I;
   }
   //~ Serial.print(curVoltage);
   //~ Serial.print(", ");
@@ -75,10 +77,10 @@ void Psu::servoVoltage(unsigned int curVoltage) {
 void Psu::servoCurrent(unsigned int curCurrent) {
   float c = (float)curCurrent / (float) MAX_CURRENT;
   float error = csp - c;
-  float ctrl = error * C_P + errIntegral;
+  float ctrl = error * ipid.P + errIntegral;
   int controlSignal = ctrl * 255;
   if(controlSignal < 255) {
-    errIntegral += error * C_I;
+    errIntegral += error * ipid.I;
   }
   //~ Serial.print(curCurrent);
   //~ Serial.print(", ");
