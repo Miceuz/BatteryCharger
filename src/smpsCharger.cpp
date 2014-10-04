@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #define ISENSE A7
 #define VSENSE A6
 #define DAC_OUT 3
