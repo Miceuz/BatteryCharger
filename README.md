@@ -1,3 +1,10 @@
+BatteryCharger
+==============
+
+Smart lead-acid battery charger
+
+Random ebay-china SMPS was hacked to be controlled by an external microcontroller. This is an Arduino code that implements a simple 3-stage charger. 
+
 [![Build Status](https://travis-ci.org/WeAreLeka/Bare-Arduino-Project.svg?branch=master)](https://travis-ci.org/WeAreLeka/Bare-Arduino-Project)
 
 # Bare Arduino Project
@@ -118,4 +125,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-
