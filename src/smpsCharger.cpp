@@ -12,7 +12,7 @@ int avgCurrent = 0;
 unsigned long absorptionStart = 0;
 unsigned long lastVoltageControlTimestamp = 0;
 
-Psu psu(DAC_OUT, ISENSE, VSENSE);
+Psu psu(DAC_OUT, ISENSE, VSENSE, {1,1,1}, {1,1,1});
 
 byte isVoltageControlTime() {
   if(millis() - lastVoltageControlTimestamp >= VOLTAGE_CTRL_INTERVAL){

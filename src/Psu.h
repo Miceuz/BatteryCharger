@@ -9,9 +9,14 @@
 #define MAX_VOLTAGE 16540
 #define MAX_CURRENT 10000
 
+typedef struct _PID {
+    float P;
+    float I;
+    float D; } PID;
+
 class Psu {
     public:
-        Psu(uint8_t dacOutPin, uint8_t isensePin, uint8_t vsensePin);
+        Psu(uint8_t dacOutPin, uint8_t isensePin, uint8_t vsensePin, PID ipid, PID vpid);
         void setConstantVoltage(uint16_t voltage);
         void setConstantCurrent(uint16_t current);
         void servo();

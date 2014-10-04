@@ -1,7 +1,7 @@
 #include "Psu.h"
 #include "Arduino.h"
 
-Psu::Psu(uint8_t _dacOutPin, uint8_t _isensePin, uint8_t _vsensePin):
+Psu::Psu(uint8_t _dacOutPin, uint8_t _isensePin, uint8_t _vsensePin, PID ipid, PID vpid):
         dacOutPin(_dacOutPin),
         isensePin(_isensePin),
         vsensePin(_vsensePin)
