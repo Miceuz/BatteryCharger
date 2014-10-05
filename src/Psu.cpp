@@ -47,7 +47,7 @@ uint16_t Psu::getVoltage() {
     return voltage;
 }
 
-uint8_t Psu::getControllSignal() {
+int16_t Psu::getControllSignal() {
     return controlSignal;
 }
 
@@ -61,13 +61,28 @@ void Psu::pidIteration(float processVariable, PID *gains) {
     float error = setPoint - processVariable;
     float ctrl = error * gains->P + errIntegral;
 
-    int controlSignal = ctrl * 255;
+    controlSignal = ctrl * 255;
+
+    //~ Serial.print(" sp:");
+    //~ Serial.print(setPoint * 10000);
+    //~ Serial.print(" pv:");
+    //~ Serial.print(processVariable * 10000);
+    //~ Serial.print(" er:");
+    //~ Serial.print(error * 10000);
+    //~ Serial.print(" ctrl:");
+    //~ Serial.print(ctrl * 10000);
+    //~ Serial.print(" ctrl:");
+    //~ Serial.println(controlSignal);
     
     if(controlSignal < 255) {
         errIntegral += error * gains->I;
     }
 
     controll(controlSignal);
+}
+
+void Psu::off() {
+    controll(0);
 }
 
 void Psu::controll(int value) {

@@ -6,8 +6,8 @@
 #define MODE_CC 0
 #define MODE_CV 1
 
-#define MAX_VOLTAGE 16540
-#define MAX_CURRENT 10000
+#define MAX_VOLTAGE 16300
+#define MAX_CURRENT 10150
 
 typedef struct _PID {
     float P;
@@ -22,11 +22,11 @@ class Psu {
         void servo();
         uint16_t getCurrent();
         uint16_t getVoltage();
-        uint8_t getControllSignal();
+        int16_t getControllSignal();
         uint8_t getMode();
-
-    private:
+        void off();
         void controll(int value);
+    private:
         void pidIteration(float processVariable, PID *coeffs);
         void setVoltage(unsigned int newSetPoint);
         void setCurrent(unsigned int newSetPoint);
