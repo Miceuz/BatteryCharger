@@ -1,7 +1,8 @@
 #include "LeadAcidCharger.h"
 
-LeadAcidCharger::LeadAcidCharger(Psu *_psu):
-    psu(_psu)
+LeadAcidCharger::LeadAcidCharger(Psu *_psu, LiquidCrystal_I2C* _lcd):
+    psu(_psu),
+    lcd(_lcd)
 {
 
 }
@@ -39,11 +40,28 @@ void LeadAcidCharger::run() {
     Serial.print(", ");
     Serial.print(avgCurrent);
     Serial.println();
+    
+    if(millis() - lcdOutTimestamp > 1000) {
+        lcd->setCursor(0,1);
+        lcd->print(avgVoltage / 1000);
+        lcd->print(".");
+        lcd->print(avgVoltage % 1000);
+        lcd->print("V ");
+        lcd->print(avgCurrent / 1000);
+        lcd->print(".");
+        lcd->print(avgCurrent % 1000);
+        lcd->print("A");
+        lcdOutTimestamp = millis();
+    }
+
   }
 }
 
 void LeadAcidCharger::startPrechargeState() {
   Serial.println("Starting PRECHARGE");
+  lcd->setCursor(0,0);
+  lcd->print("PRECHARGE");
+
   mode = MODE_PRECHARGE;
   psu->setConstantCurrent(prechargeCurrent);
   stageStarted = millis();
@@ -51,6 +69,8 @@ void LeadAcidCharger::startPrechargeState() {
 
 void LeadAcidCharger::startBulkStage() {
   Serial.println("Starting BULK CHARGE");
+  lcd->setCursor(0,0);
+  lcd->print("BULK");
   mode = MODE_BULK; 
   psu->setConstantCurrent(bulkCurrent);
   stageStarted = millis();
@@ -58,6 +78,8 @@ void LeadAcidCharger::startBulkStage() {
 
 void LeadAcidCharger::startAbsorptionStage() {
   Serial.println("Starting ABSORPTION CHARGE");
+  lcd->setCursor(0,0);
+  lcd->print("ABSORPTION");
   mode = MODE_ABSORPTION; 
   psu->setConstantVoltage(absorptionVoltage);
   stageStarted = millis();
@@ -65,6 +87,8 @@ void LeadAcidCharger::startAbsorptionStage() {
 
 void LeadAcidCharger::startFloatStage() {
   Serial.println("Starting FLOATING CHARGE");
+  lcd->setCursor(0,0);
+  lcd->print("FLOAT");
   mode = MODE_FLOAT; 
   psu->setConstantVoltage(floatVoltage);
   stageStarted = millis();
@@ -78,7 +102,7 @@ void LeadAcidCharger::setBulkCurrent(uint16_t c) {
 
 
 void LeadAcidCharger::checkBatteryConnected() {
-  if(millis() - stageStarted > 30000){
+  if(millis() - stageStarted > 20000){
     if(psu->getCurrent() < 10) {
       psu->off();
       Serial.println("Connect the battery!");

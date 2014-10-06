@@ -3,6 +3,7 @@
 
 #include "Psu.h"
 #include "Arduino.h"
+#include "LiquidCrystal_I2C.h"
 
 //milliseconds
 #define VOLTAGE_CTRL_INTERVAL 100
@@ -14,7 +15,7 @@
 
 class LeadAcidCharger {
     public:
-        LeadAcidCharger(Psu*);
+        LeadAcidCharger(Psu*, LiquidCrystal_I2C*);
         void run(void);
         void setBulkCurrent(uint16_t);
         void startPrechargeState();
@@ -29,6 +30,7 @@ class LeadAcidCharger {
         uint8_t isControlTime();
         
         Psu *psu;
+        LiquidCrystal_I2C *lcd;
         int32_t avgCurrent = 0;
         int32_t avgVoltage = 0;
 
@@ -46,6 +48,7 @@ class LeadAcidCharger {
 
         unsigned long stageStarted = 0;
         unsigned long lastControlTimestamp = 0;
+        unsigned long lcdOutTimestamp = 0;
 
         uint8_t mode;
 
