@@ -14,21 +14,23 @@ void LeadAcidCharger::run() {
     avgVoltage = (((int32_t) psu->getVoltage() - avgVoltage) >> 4) + avgVoltage;
     
     if(MODE_BULK == mode) {
-      if(avgVoltage > absorptionVoltage + voltsPerDegreeCompensation()) {
-        startAbsorptionStage();
-      }
+        checkBatteryConnected();
+        if(avgVoltage > absorptionVoltage + voltsPerDegreeCompensation()) {
+            startAbsorptionStage();
+        }
     } else if(MODE_ABSORPTION == mode) {
-      if(millis() - stageStarted > 3000 && avgCurrent < bulkEndCurrent) {
-        startFloatStage();
-      }
+        checkBatteryConnected();
+        if(millis() - stageStarted > 3000 && avgCurrent < bulkEndCurrent) {
+            startFloatStage();
+        }
     } else if(MODE_FLOAT == mode) {
     } else if(MODE_PRECHARGE == mode) {
-      if(millis() - stageStarted > 3000 && avgVoltage > criticallyDischargedVoltage + voltsPerDegreeCompensation()) {
-        startBulkStage();
-      }
+        checkBatteryConnected();
+        if(millis() - stageStarted > 3000 && avgVoltage > criticallyDischargedVoltage + voltsPerDegreeCompensation()) {
+            startBulkStage();
+        }
     }
     
-    checkBatteryConnected();
 
     Serial.print(psu->getVoltage());
     Serial.print(", ");
@@ -70,7 +72,7 @@ void LeadAcidCharger::startPrechargeState() {
 void LeadAcidCharger::startBulkStage() {
   Serial.println("Starting BULK CHARGE");
   lcd->setCursor(0,0);
-  lcd->print("BULK");
+  lcd->print("BULK            ");
   mode = MODE_BULK; 
   psu->setConstantCurrent(bulkCurrent);
   stageStarted = millis();
@@ -79,7 +81,7 @@ void LeadAcidCharger::startBulkStage() {
 void LeadAcidCharger::startAbsorptionStage() {
   Serial.println("Starting ABSORPTION CHARGE");
   lcd->setCursor(0,0);
-  lcd->print("ABSORPTION");
+  lcd->print("ABSORPTION      ");
   mode = MODE_ABSORPTION; 
   psu->setConstantVoltage(absorptionVoltage);
   stageStarted = millis();
@@ -88,7 +90,7 @@ void LeadAcidCharger::startAbsorptionStage() {
 void LeadAcidCharger::startFloatStage() {
   Serial.println("Starting FLOATING CHARGE");
   lcd->setCursor(0,0);
-  lcd->print("FLOAT");
+  lcd->print("FLOAT           ");
   mode = MODE_FLOAT; 
   psu->setConstantVoltage(floatVoltage);
   stageStarted = millis();
@@ -106,6 +108,10 @@ void LeadAcidCharger::checkBatteryConnected() {
     if(psu->getCurrent() < 10) {
       psu->off();
       Serial.println("Connect the battery!");
+      lcd->setCursor(0,0);
+      lcd->print("NO BATTERY!     ");
+      lcd->setCursor(0,1);
+      lcd->print("CONNECT & RESET ");
       while(1);
     }
   }
